@@ -21,11 +21,18 @@ option(SESE_ARCHIVE_BUILD_TEST "build unit test targets" OFF)
 
 auto_enable_feature(SESE_ARCHIVE_BUILD_TEST "tests")
 
-project(sese-archive VERSION 0.1)
+project(sese-archive VERSION 0.1.0)
 
 file(GLOB_RECURSE SRC "${CMAKE_CURRENT_LIST_DIR}/src/sese/archive/*.cpp")
 
 add_library(Archive ${SRC})
+
+target_include_directories(
+        Archive
+        PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:include>
+)
 
 if (${MSVC})
     target_compile_options(Archive PRIVATE "/utf-8")
@@ -44,6 +51,12 @@ set_target_properties(Archive
         PREFIX ""
         WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
+
+if (WIN32)
+    set(DLL_INFO_RC ${PROJECT_BINARY_DIR}/WindowsDllInfo.rc)
+    configure_file(${PROJECT_SOURCE_DIR}/WindowsDllInfo.rc.in ${DLL_INFO_RC})
+    target_sources(Archive PRIVATE ${DLL_INFO_RC})
+endif ()
 
 if (${SESE_ARCHIVE_BUILD_TEST})
     enable_testing()
