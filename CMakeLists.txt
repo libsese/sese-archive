@@ -73,6 +73,10 @@ if (${SESE_ARCHIVE_BUILD_TEST})
             PROPERTIES
             CXX_STANDARD 17
     )
+
+    if (${MSVC})
+        target_compile_options(AllTestInMain PRIVATE "/utf-8")
+    endif ()
 endif ()
 
 include(GNUInstallDirs)

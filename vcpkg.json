@@ -3,7 +3,8 @@
     "version-string": "0.1.0",
     "dependencies": [
         {
-            "name": "libarchive"
+            "name": "libarchive",
+            "version>=": "3.6.2"
         },
         {
             "name": "sese-core",

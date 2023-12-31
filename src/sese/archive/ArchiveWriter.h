@@ -16,6 +16,24 @@ namespace sese::archive {
 
         int setFilterBZip2();
 
+        int setFilterLZ4();
+
+        int setFilterLZip();
+
+        int setFilterZstd();
+
+        int setFilterXZ();
+
+        int setFilterLzma();
+
+        int setFilterLzop();
+
+        int setFilterGRZip();
+
+        int setFilterLRZip();
+
+        int setFormatXar();
+
         int setFormatTar();
 
         int setFormatZip();
@@ -23,6 +41,8 @@ namespace sese::archive {
         int setFormat7z();
 
         int setFormatISO();
+
+        int setPassword(const std::string &pwd);
 
         bool begin();
 
@@ -49,6 +69,8 @@ namespace sese::archive {
         static int closeCallback(void *archive, ArchiveWriter *_this);
 
         static int freeCallback(void *archive, ArchiveWriter *_this);
+
+        static const char *passphraseCallback(void *archive, ArchiveWriter *_this);
 
     protected:
         io::OutputStream *output{};

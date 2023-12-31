@@ -24,8 +24,13 @@ inline int free(struct archive *a, void *archive) {
     return ArchiveWriter::freeCallback(a, static_cast<ArchiveWriter *>(archive));
 }
 
+inline const char *passphrase(struct archive *a,void *archive) {
+    return ArchiveWriter::passphraseCallback(a, static_cast<ArchiveWriter *>(archive));
+}
+
 ArchiveWriter::ArchiveWriter(io::OutputStream *output)
         : output(output), archive(archive_write_new()) {
+    archive_write_set_passphrase_callback(XX, this, passphrase);
 }
 
 ArchiveWriter::~ArchiveWriter() {
@@ -38,6 +43,42 @@ int ArchiveWriter::setFilterGZip() {
 
 int ArchiveWriter::setFilterBZip2() {
     return archive_write_add_filter_bzip2(XX);
+}
+
+int ArchiveWriter::setFilterLZ4() {
+    return archive_write_add_filter_lz4(XX);
+}
+
+int ArchiveWriter::setFilterLZip() {
+    return archive_write_add_filter_lzip(XX);
+}
+
+int ArchiveWriter::setFilterZstd() {
+    return archive_write_add_filter_zstd(XX);
+}
+
+int ArchiveWriter::setFilterXZ() {
+    return archive_write_add_filter_xz(XX);
+}
+
+int ArchiveWriter::setFilterLzma() {
+    return archive_write_add_filter_lzma(XX);
+}
+
+int ArchiveWriter::setFilterLzop() {
+    return archive_write_add_filter_lzop(XX);
+}
+
+int ArchiveWriter::setFilterGRZip() {
+    return archive_write_add_filter_grzip(XX);
+}
+
+int ArchiveWriter::setFilterLRZip() {
+    return archive_write_add_filter_lrzip(XX);
+}
+
+int ArchiveWriter::setFormatXar() {
+    return archive_write_set_format_xar(XX);
 }
 
 int ArchiveWriter::setFormatTar() {
@@ -54,6 +95,11 @@ int ArchiveWriter::setFormat7z() {
 
 int ArchiveWriter::setFormatISO() {
     return archive_write_set_format_iso9660(XX);
+}
+
+int ArchiveWriter::setPassword(const std::string &pwd) {
+    // archive_write
+    return archive_write_set_passphrase(XX, pwd.c_str());
 }
 
 bool ArchiveWriter::begin() {
@@ -212,4 +258,8 @@ int ArchiveWriter::closeCallback(void *archive, ArchiveWriter *_this) {
 
 int ArchiveWriter::freeCallback(void *archive, ArchiveWriter *_this) {
     return ARCHIVE_OK;
+}
+
+const char *ArchiveWriter::passphraseCallback(void *archive, archive::ArchiveWriter *_this) {
+    return nullptr;
 }
