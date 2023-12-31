@@ -63,8 +63,16 @@ if (${SESE_ARCHIVE_BUILD_TEST})
     file(GLOB_RECURSE TEST_SRC "${CMAKE_CURRENT_LIST_DIR}/test/*.cpp")
     add_executable(AllTestInMain ${TEST_SRC})
 
+    target_compile_definitions(AllTestInMain PRIVATE "PROJECT_PATH=\"${PROJECT_SOURCE_DIR}\"")
+    target_compile_definitions(AllTestInMain PRIVATE "PROJECT_BIN_PATH=\"${PROJECT_BINARY_DIR}\"")
+
     find_package(GTest CONFIG REQUIRED)
     target_link_libraries(AllTestInMain PRIVATE GTest::gtest Archive)
+
+    set_target_properties(AllTestInMain
+            PROPERTIES
+            CXX_STANDARD 17
+    )
 endif ()
 
 include(GNUInstallDirs)
