@@ -52,7 +52,10 @@ TEST(TestWrite, Password) {
     auto file = File::create(PROJECT_BIN_PATH "/password.zip", BINARY_WRITE_CREATE_TRUNC);
     ArchiveWriter writer(file.get());
     writer.setFormatZip();
-    ASSERT_EQ(writer.setPassword("123456"), 0);
+    writer.setFilterNone();
+    EXPECT_EQ(writer.setOptions("zip:experimental"), 0) << writer.getErrorString();
+    EXPECT_EQ(writer.setOptions("zip:encryption=aes256"), 0) << writer.getErrorString();
+    EXPECT_EQ(writer.setPassword("123456"), 0);
     EXPECT_TRUE(writer.begin());
     {
         auto str = "Hello World";

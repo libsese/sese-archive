@@ -77,6 +77,10 @@ int ArchiveWriter::setFilterLRZip() {
     return archive_write_add_filter_lrzip(XX);
 }
 
+int ArchiveWriter::setFilterNone() {
+    return archive_write_add_filter_none(XX);
+}
+
 int ArchiveWriter::setFormatXar() {
     return archive_write_set_format_xar(XX);
 }
@@ -98,8 +102,20 @@ int ArchiveWriter::setFormatISO() {
 }
 
 int ArchiveWriter::setPassword(const std::string &pwd) {
-    // archive_write
+    archive_write_set_options(XX, "zip:password=123");
     return archive_write_set_passphrase(XX, pwd.c_str());
+}
+
+int ArchiveWriter::setOptions(const std::string &opt) {
+    return archive_write_set_options(XX, opt.c_str());
+}
+
+int ArchiveWriter::getError() {
+    return archive_errno(XX);
+}
+
+const char *ArchiveWriter::getErrorString() {
+    return archive_error_string(XX);
 }
 
 bool ArchiveWriter::begin() {

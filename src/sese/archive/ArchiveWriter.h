@@ -32,6 +32,8 @@ namespace sese::archive {
 
         int setFilterLRZip();
 
+        int setFilterNone();
+
         int setFormatXar();
 
         int setFormatTar();
@@ -43,6 +45,12 @@ namespace sese::archive {
         int setFormatISO();
 
         int setPassword(const std::string &pwd);
+
+        int setOptions(const std::string &opt);
+
+        int getError();
+
+        const char *getErrorString();
 
         bool begin();
 
