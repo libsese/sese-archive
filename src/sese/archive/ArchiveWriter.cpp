@@ -102,7 +102,6 @@ int ArchiveWriter::setFormatISO() {
 }
 
 int ArchiveWriter::setPassword(const std::string &pwd) {
-    archive_write_set_options(XX, "zip:password=123");
     return archive_write_set_passphrase(XX, pwd.c_str());
 }
 
