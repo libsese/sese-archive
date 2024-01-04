@@ -12,11 +12,13 @@ namespace sese::archive {
     public:
         using ExtractCallback = std::function<bool(const std::filesystem::path &base_path, Config::EntryType type, io::InputStream *input, size_t readable)>;
 
-        static bool extract(const std::filesystem::path &src_path, const std::filesystem::path &dest_path);
+        static bool extract(const std::filesystem::path &src_path, const std::filesystem::path &dest_path, const std::string &pwd = {});
 
         explicit ArchiveReader(io::InputStream *input);
 
         virtual ~ArchiveReader();
+
+        int setPassword(const std::string &pwd);
 
         bool extract(const ExtractCallback &callback);
 

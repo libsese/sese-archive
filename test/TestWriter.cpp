@@ -22,7 +22,7 @@ TEST(TestWriter, GlobFile) {
     file->close();
 }
 
-TEST(TestWrite, Stream) {
+TEST(TestWriter, Stream) {
     auto file = File::create(PROJECT_BIN_PATH "/stream.tar.gz", BINARY_WRITE_CREATE_TRUNC);
     ArchiveWriter writer(file.get());
     writer.setFormatTar();
@@ -47,14 +47,16 @@ TEST(TestWrite, Stream) {
     file->close();
 }
 
-/// 此实例不能正常工作
-TEST(TestWrite, Password) {
+TEST(TestWriter, Password) {
     auto file = File::create(PROJECT_BIN_PATH "/password.zip", BINARY_WRITE_CREATE_TRUNC);
     ArchiveWriter writer(file.get());
     writer.setFormatZip();
-    writer.setFilterNone();
-    EXPECT_EQ(writer.setOptions("zip:experimental"), 0) << writer.getErrorString();
-    EXPECT_EQ(writer.setOptions("zip:encryption=aes256"), 0) << writer.getErrorString();
+    // 此选项在 vcpkg 导入的 libarchive 中不受支持，参考链接
+    // https://github.com/microsoft/vcpkg/issues/21001
+    // https://github.com/libarchive/libarchive/issues/1607
+    // https://github.com/libarchive/libarchive/issues/1669
+    // EXPECT_EQ(writer.setOptions("zip:encryption=aes256"), 0) << writer.getErrorString();
+    EXPECT_EQ(writer.setOptions("zip:encryption=zipcrypt"), 0) << writer.getErrorString();
     EXPECT_EQ(writer.setPassword("123456"), 0);
     EXPECT_TRUE(writer.begin());
     {

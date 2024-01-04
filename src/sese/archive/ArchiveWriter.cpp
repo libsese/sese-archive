@@ -236,6 +236,7 @@ bool ArchiveWriter::addStream(const std::filesystem::path &path, io::InputStream
     archive_entry_set_pathname(entry, pathname.c_str());
     archive_entry_set_size(entry, static_cast<int64_t>(exp));
     archive_entry_set_filetype(entry, AE_IFREG);
+    archive_entry_set_is_data_encrypted(entry, 1);
     archive_write_header(XX, entry);
 
     char buffer[4096];

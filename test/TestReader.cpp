@@ -8,12 +8,13 @@ using sese::io::File;
 using sese::archive::ArchiveReader;
 
 TEST(TestReader, Extract) {
-    EXPECT_TRUE(ArchiveReader::extract(PROJECT_PATH "/test/archive.zip", PROJECT_BIN_PATH "/"));
+    EXPECT_TRUE(ArchiveReader::extract(PROJECT_PATH "/test/archive.zip", PROJECT_BIN_PATH "/archive-p", "password123"));
 }
 
 TEST(TestReader, Info) {
     auto file = File::create(PROJECT_PATH "/test/archive.zip", BINARY_READ_EXISTED);
     ArchiveReader reader(file.get());
+    EXPECT_EQ(reader.setPassword("password123"), 0);
     EXPECT_TRUE(reader.extract(
             [](const std::filesystem::path &wpath,
                sese::archive::Config::EntryType type,

@@ -9,7 +9,8 @@ using sese::io::File;
 using sese::io::InputStream;
 using sese::archive::ArchiveReader;
 
-bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::filesystem::path &dest_path) {
+bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::filesystem::path &dest_path,
+                            const std::string &pwd) {
     auto src = src_path.string();
     auto dest = dest_path.string();
 
@@ -17,6 +18,14 @@ bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::fi
     archive_read_support_compression_all(a);
     archive_read_support_filter_all(a);
     archive_read_support_format_all(a);
+
+    if (!pwd.empty()) {
+        if (ARCHIVE_OK != archive_read_add_passphrase(a, pwd.c_str())) {
+            archive_read_free(a);
+            return false;
+        }
+    }
+
     archive_read_open_filename(a, src.c_str(), 4096);
 
     struct archive_entry *entry{};
@@ -54,8 +63,10 @@ bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::fi
 
         size_t len;
         char buffer[4096];
-        auto file = File::create(dest + filename, BINARY_WRITE_CREATE_TRUNC);
+        auto filepath = (dest_path / filename).string();
+        auto file = File::create(filepath, BINARY_WRITE_CREATE_TRUNC);
         while ((len = archive_read_data(a, buffer, sizeof(buffer))) > 0) {
+            auto e = archive_error_string(a);
             file->write(buffer, len);
         }
         file->flush();
@@ -82,23 +93,30 @@ inline int close(struct archive *a, void *data) {
 
 ArchiveReader::ArchiveReader(io::InputStream *input)
         : input(input), archive(archive_read_new()) {
-    archive_read_support_compression_all(XX);
-    archive_read_support_filter_all(XX);
-    archive_read_support_format_all(XX);
-    archive_read_open(
-            XX,
-            this,
-            open,
-            read,
-            close
-    );
 }
 
 ArchiveReader::~ArchiveReader() {
     archive_read_free(XX);
 }
 
+int ArchiveReader::setPassword(const std::string &pwd) {
+    return archive_read_add_passphrase(XX, pwd.c_str());
+}
+
 bool ArchiveReader::extract(const ArchiveReader::ExtractCallback &callback) {
+    archive_read_support_compression_all(XX);
+    archive_read_support_filter_all(XX);
+    archive_read_support_format_all(XX);
+    if(ARCHIVE_OK != archive_read_open(
+            XX,
+            this,
+            open,
+            read,
+            close
+    )) {
+        return false;
+    }
+
     struct archive_entry *entry{};
     auto archiveInputStream = ArchiveInputStream(archive);
     while (archive_read_next_header(XX, &entry) == ARCHIVE_OK) {
