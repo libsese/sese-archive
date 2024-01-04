@@ -26,13 +26,16 @@ bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::fi
         }
     }
 
-    archive_read_open_filename(a, src.c_str(), 4096);
+    if (ARCHIVE_OK != archive_read_open_filename(a, src.c_str(), 4096)) {
+        archive_read_free(a);
+        return false;
+    }
 
     struct archive_entry *entry{};
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
         std::string filename = archive_entry_pathname(entry);
 
-        auto size = archive_entry_size(entry);
+        auto exp = archive_entry_size(entry);
         auto type = archive_entry_filetype(entry);
         if (AE_IFDIR == type) {
             if ('/' == filename.at(filename.length() - 1)) {
@@ -61,16 +64,28 @@ bool ArchiveReader::extract(const std::filesystem::path &src_path, const std::fi
             }
         }
 
-        size_t len;
         char buffer[4096];
         auto filepath = (dest_path / filename).string();
         auto file = File::create(filepath, BINARY_WRITE_CREATE_TRUNC);
-        while ((len = archive_read_data(a, buffer, sizeof(buffer))) > 0) {
-            auto e = archive_error_string(a);
-            file->write(buffer, len);
+        while (exp) {
+            auto len = archive_read_data(a, buffer, std::min<size_t>(exp, 4096));
+            if (len <= 0) {
+                break;
+            }
+            auto write = file->write(buffer, static_cast<size_t>(len));
+            if (write != len) {
+                break;
+            } else {
+                exp -= len;
+            }
         }
+
         file->flush();
         file->close();
+        if (exp) {
+            archive_read_free(a);
+            return false;
+        }
     }
 
     archive_read_free(a);
@@ -103,11 +118,15 @@ int ArchiveReader::setPassword(const std::string &pwd) {
     return archive_read_add_passphrase(XX, pwd.c_str());
 }
 
+int ArchiveReader::setOptions(const std::string &opt) {
+    return archive_read_set_options(XX, opt.c_str());
+}
+
 bool ArchiveReader::extract(const ArchiveReader::ExtractCallback &callback) {
     archive_read_support_compression_all(XX);
     archive_read_support_filter_all(XX);
     archive_read_support_format_all(XX);
-    if(ARCHIVE_OK != archive_read_open(
+    if (ARCHIVE_OK != archive_read_open(
             XX,
             this,
             open,

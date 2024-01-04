@@ -20,6 +20,8 @@ namespace sese::archive {
 
         int setPassword(const std::string &pwd);
 
+        int setOptions(const std::string &opt);
+
         bool extract(const ExtractCallback &callback);
 
         static int openCallback(void *a, ArchiveReader *_this);
