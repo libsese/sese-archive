@@ -1,3 +1,9 @@
+/// \file ArchiveOutputStream.h
+/// \brief 存档输出流
+/// \author kaoru
+/// \date 2024年01月9日
+
+
 // Copyright 2024 libsese
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +23,8 @@
 #include <sese/io/OutputStream.h>
 
 namespace sese::archive {
+
+    ///存档输出流
     class ArchiveOutputStream : public io::OutputStream {
     public:
         explicit ArchiveOutputStream(void *archive_write);

@@ -19,7 +19,7 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "Sese Archive Library - https://github.com/libsese/sese-archive.git"
             VALUE "InternalName", "Sese Archive Library"
-            VALUE "LegalCopyright", "libsese (C) 2022-2024"
+            VALUE "LegalCopyright", "(C) 2024 libsese"
             VALUE "OriginalFilename", "sese.archive.dll"
             VALUE "ProductName", "sese-archive"
             VALUE "ProductVersion", "${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR},${PROJECT_VERSION_PATCH}"

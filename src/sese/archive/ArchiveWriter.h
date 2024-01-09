@@ -1,3 +1,9 @@
+/// \file ArchiveWriter.h
+/// \brief 存档写入器
+/// \author kaoru
+/// \date 2024年01月9日
+
+
 // Copyright 2024 libsese
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +26,12 @@
 #include <filesystem>
 
 namespace sese::archive {
+
+    /// 存档写入器
     class ArchiveWriter {
     public:
+        /// 构造写入器
+        /// \param output 输出流
         explicit ArchiveWriter(io::OutputStream *output);
 
         virtual ~ArchiveWriter();
@@ -58,30 +68,60 @@ namespace sese::archive {
 
         int setFormatISO();
 
+        /// 设置写入存档所使用的密码
+        /// \param pwd 密码
+        /// \return 成功返回 0
         int setPassword(const std::string &pwd);
 
+        /// 设置存档的 libarchive 选项
+        /// \param opt 选项
+        /// \return 成功返回 0
         int setOptions(const std::string &opt);
 
+        /// 获取当前错误码
+        /// \return 错误码
         int getError();
 
+        /// 获取当前错误信息
+        /// \return 错误信息
         const char *getErrorString();
 
+        /// 开始添加实体
+        /// \return 操作结果
         bool begin();
 
+        /// 结束添加实体
+        /// \return 操作结果
         bool done();
 
+        /// 实体操作函数，添加一个文件或者一个文件夹到当前存档根目录中
+        /// \param path 目标路径
+        /// \return 是否成功
         bool addPath(const std::filesystem::path &path);
 
+        /// 实体操作函数，添加一个文件或者文件夹到当前存档指定路径中
+        /// \param base 存档内路径
+        /// \param path 目标路径
+        /// \return 是否成功
         bool addPath(const std::filesystem::path &base, const std::filesystem::path &path);
 
+        /// 实体操作函数，不推荐使用
         bool addFile(const std::filesystem::path &file);
 
+        /// 实体操作函数，不推荐使用
         bool addFile(const std::filesystem::path &base, const std::filesystem::path &file);
 
+        /// 实体操作函数，不推荐使用
         bool addDirectory(const std::filesystem::path &dir);
 
+        /// 实体操作函数，不推荐使用
         bool addDirectory(const std::filesystem::path &base, const std::filesystem::path &dir);
 
+        /// 实体操作函数，从流中读取内容并写入到存档指定路径中
+        /// \param path 存档内路径
+        /// \param input 输入流
+        /// \param len 写入大小
+        /// \return 是否成功
         bool addStream(const std::filesystem::path &path, io::InputStream *input, size_t len);
 
         static int openCallback(void *archive, ArchiveWriter *_this);

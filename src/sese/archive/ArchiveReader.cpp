@@ -163,6 +163,14 @@ bool ArchiveReader::extract(const ArchiveReader::ExtractCallback &callback) {
     return true;
 }
 
+int ArchiveReader::getError() {
+    return archive_errno(XX);
+}
+
+const char *ArchiveReader::getErrorString() {
+    return archive_error_string(XX);
+}
+
 int ArchiveReader::openCallback(void *a, ArchiveReader *_this) {
     return ARCHIVE_OK;
 }

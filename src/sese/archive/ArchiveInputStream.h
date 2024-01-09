@@ -1,3 +1,9 @@
+/// \file ArchiveInputStream.h
+/// \brief 存档输入流
+/// \author kaoru
+/// \date 2024年01月9日
+
+
 // Copyright 2024 libsese
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +24,7 @@
 
 namespace sese::archive {
 
+    /// 存档输入流
     class ArchiveInputStream final : public io::InputStream {
     public:
         explicit ArchiveInputStream(void *archive_read);
